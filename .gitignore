@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+.env
+pipeline.log
+error.log
+data/.last_updated
+plots/*.png
+models/saved_muril/
+models/saved_xlmroberta/

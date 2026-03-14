@@ -1,0 +1,5 @@
+error: The following untracked working tree files would be overwritten by reset:
+	pipeline.log
+Please move or remove them before you reset.
+Aborting
+fatal: could not move back to d990a36258681faf4423e1bb8eb230cd078962f9
