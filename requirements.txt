@@ -2,7 +2,7 @@ pandas
 numpy
 scikit-learn
 torch
-transformers
+transformers>=4.40.0
 datasets
 beautifulsoup4
 requests
@@ -10,6 +10,7 @@ scrapy
 matplotlib
 seaborn
 scipy
-streamlit
+streamlit>=1.38.0
+altair>=5.0.0
 feedparser
 langdetect
