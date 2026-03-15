@@ -148,7 +148,7 @@ last_updated = get_last_updated()
 st.sidebar.markdown(f'<p class="last-updated">Last updated: {last_updated}</p>', unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigate", ["📰 Live News Feed", "🗂️ Dataset Explorer", "📈 Trend Analysis", "🗺️ Geospatial (Demo)"])
+page = st.sidebar.radio("Navigate", ["📰 Live News Feed", "🛡️ Verification Hub", "🗂️ Dataset Explorer", "📈 Trend Analysis", "🗺️ Geospatial (Demo)"])
 
 st.sidebar.markdown("---")
 st.sidebar.info("Powered by RSS feeds from NDTV, TOI, The Hindu, India Today & HT.")
@@ -256,6 +256,71 @@ elif page == "🗺️ Geospatial (Demo)":
         st.map(pd.DataFrame(coords))
     else:
         st.warning("Data not found.")
+
+elif page == "🛡️ Verification Hub":
+    from utils.fact_checker import extract_keywords, search_online, compare_articles
+    
+    st.title("🛡️ News Verification Hub")
+    st.markdown("""
+    Verify the authenticity of crime-related articles by cross-referencing them with 
+    real-time news reports from trusted Indian sources.
+    """)
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.subheader("Verify Article Text")
+        article_text = st.text_area("Paste the article content here:", height=300, 
+                                     placeholder="Enter the full text of the crime report you want to verify...")
+        
+        verify_btn = st.button("🔍 Verify Authenticity", type="primary", use_container_width=True)
+    
+    with col2:
+        st.subheader("How it works")
+        st.info("""
+        1. **NLP Analysis**: We extract key entities (locations, names, events) from your text.
+        2. **Live Search**: We query major Indian news sources (TOI, NDTV, Hindu, etc.) for matching reports.
+        3. **Confidence Scoring**: Our algorithm compares details and provides a verification status.
+        """)
+        
+        if article_text:
+            keywords = extract_keywords(article_text)
+            if keywords:
+                st.write("**Detected Keywords:**")
+                st.write(", ".join([f"`{kw}`" for kw in keywords]))
+
+    if verify_btn:
+        if not article_text or len(article_text) < 50:
+            st.error("Please provide a more detailed article text for verification (min 50 characters).")
+        else:
+            with st.spinner("Searching online resources and comparing data..."):
+                keywords = extract_keywords(article_text)
+                related = search_online(keywords)
+                results = compare_articles(article_text, related)
+                
+                st.divider()
+                st.header("Verification Result")
+                
+                # Metric display
+                status_color = "green" if results['status'] == "Verified" else "orange" if "Matches" in results['status'] else "red"
+                
+                m1, m2 = st.columns(2)
+                m1.markdown(f"### Status: :{status_color}[{results['status']}]")
+                m2.metric("Confidence Score", f"{results['score']}%")
+                
+                st.markdown(f"**Analysis:** {results['reasoning']}")
+                
+                if results['sources']:
+                    st.subheader("Related Trusted Sources")
+                    for src in results['sources']:
+                        st.markdown(f"""
+                        <div style="background: rgba(108, 99, 255, 0.1); border-left: 4px solid #6c63ff; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                            <a href="{src['url']}" target="_blank" style="font-weight: 600; color: #e0e0ff;">{src['title']}</a><br/>
+                            <span style="font-size: 0.8rem; color: #8888aa;">Source: {src['source']} &nbsp;|&nbsp; Similarity: {src['similarity']}%</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                else:
+                    st.warning("No directly matching reports were found in recent major news feeds.")
 
 # ─── Auto-refresh logic ──────────────────────────────────────────────────────
 if auto_refresh:
