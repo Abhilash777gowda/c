@@ -78,6 +78,8 @@ def fetch_live_news(max_per_feed: int = 20):
     """Run the full real-time pipeline: scrape → clean → classify → save."""
     from scraper.rss_scraper import RSSNewsScraper
     from scraper.kannada_scraper import KannadaWebScraper
+    from scraper.hindi_scraper import HindiWebScraper
+    from scraper.regional_scraper import RegionalWebScraper
     from preprocessing.text_cleaner import TextCleaner
     from utils.classifier_inference import classify_articles
 
@@ -87,7 +89,13 @@ def fetch_live_news(max_per_feed: int = 20):
     kannada_scraper = KannadaWebScraper()
     df_kannada = kannada_scraper.scrape_all(max_per_source=max_per_feed)
     
-    df_raw = pd.concat([df_rss, df_kannada], ignore_index=True)
+    hindi_scraper = HindiWebScraper()
+    df_hindi = hindi_scraper.scrape_all(max_per_source=max_per_feed)
+    
+    regional_scraper = RegionalWebScraper()
+    df_regional = regional_scraper.scrape_all(max_per_source=max_per_feed)
+    
+    df_raw = pd.concat([df_rss, df_kannada, df_hindi, df_regional], ignore_index=True)
     if df_raw.empty:
         return None, "❌ No articles fetched. Check your internet connection."
         
@@ -99,6 +107,19 @@ def fetch_live_news(max_per_feed: int = 20):
     df_raw = df_raw[df_raw['clean_text'].str.len() > 0].reset_index(drop=True)
 
     df_classified = classify_articles(df_raw.copy())
+
+    # ─── Critical Incident Alerts ───────────────────────────────────────────
+    CRITICAL_KEYS = ['murder', 'rape', 'kidnapping']
+    critical_hits = []
+    for _, row in df_classified.iterrows():
+        matches = [k for k in CRITICAL_KEYS if row.get(k, 0) == 1]
+        if matches:
+            critical_hits.append(f"🚨 {row['title']} ({', '.join(matches).title()})")
+    
+    if critical_hits:
+        st.session_state['critical_alerts'] = critical_hits[:5] # Store top 5 alerts
+    else:
+        st.session_state['critical_alerts'] = []
 
     # ─── Geocoding ───────────────────────────────────────────────────────────
     from utils.geocoder import extract_location, geocode_location
@@ -186,7 +207,15 @@ df = load_data()
 
 if page == "📰 Live News Feed":
     st.title("📰 Live Indian News Feed")
-    st.markdown("Real-time articles scraped from Indian news RSS feeds, classified by crime category.")
+    st.markdown("Real-time articles scraped from Indian news portals, classified by crime category.")
+
+    # 🚨 Display Critical Alerts
+    if 'critical_alerts' in st.session_state and st.session_state['critical_alerts']:
+        with st.container():
+            st.error("### 🚨 Critical Incident Alerts")
+            for alert in st.session_state['critical_alerts']:
+                st.markdown(f"- **{alert}**")
+            st.divider()
 
     if df is None or 'source' not in df.columns:
         st.warning("No live data yet. Click **🔄 Fetch Live News** in the sidebar to get started.")
