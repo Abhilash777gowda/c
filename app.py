@@ -86,6 +86,7 @@ def fetch_live_news(max_per_feed: int = 20):
     if df_raw.empty:
         return None, "❌ No articles fetched. Check your internet connection."
         
+    os.makedirs("data", exist_ok=True)
     df_raw.to_csv("data/raw_news.csv", index=False)
 
     cleaner = TextCleaner()
