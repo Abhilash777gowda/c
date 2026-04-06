@@ -171,7 +171,7 @@ last_updated = get_last_updated()
 st.sidebar.markdown(f'<p class="last-updated">Last updated: {last_updated}</p>', unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigate", ["📰 Live News Feed", "🛡️ Verification Hub", "🗂️ Dataset Explorer", "📈 Trend Analysis", "🗺️ Geospatial (Demo)"])
+page = st.sidebar.radio("Navigate", ["📰 Live News Feed", "🛡️ Verification Hub", "🗂️ Dataset Explorer", "📈 Trend Analysis", "🗺️ Geospatial Map"])
 
 st.sidebar.markdown("---")
 st.sidebar.info("Powered by RSS feeds from NDTV, TOI, The Hindu, India Today & HT.")
