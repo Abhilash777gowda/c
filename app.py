@@ -124,16 +124,19 @@ def fetch_live_news(max_per_feed: int = 20):
     # ─── Geocoding ───────────────────────────────────────────────────────────
     from utils.geocoder import extract_location, geocode_location
     
-    def get_coords(text):
-        loc = extract_location(text)
+    def get_coords(row):
+        # Scan title first, then text for locations
+        loc = extract_location(str(row.get('title', '')))
+        if not loc:
+            loc = extract_location(str(row.get('text', '')))
+            
         if loc:
             lat, lon = geocode_location(loc)
             return loc, lat, lon
         return None, None, None
 
-    df_classified[['location', 'lat', 'lon']] = df_classified['text'].apply(
-        lambda x: pd.Series(get_coords(x))
-    )
+    df_coords = df_classified.apply(lambda x: pd.Series(get_coords(x)), axis=1)
+    df_classified[['location', 'lat', 'lon']] = df_coords
 
     # Merge with existing data (keep newest, deduplicate by URL)
     if os.path.exists("data/labeled_news.csv"):
@@ -331,7 +334,7 @@ elif page == "📈 Trend Analysis":
         monthly = df_t[CRIME_CATEGORIES].resample('ME').sum()
         st.line_chart(monthly)
 
-elif page == "🗺️ Geospatial (Demo)":
+elif page == "🗺️ Geospatial Map":
     st.title("🗺️ Geographic Crime Heatmap")
     st.markdown("Real-time article locations extracted from news reports across India.")
 
