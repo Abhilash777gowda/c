@@ -11,6 +11,11 @@ st.set_page_config(
     page_icon="🛡️",
 )
 
+# Ensure data directory exists for cloud persistence
+os.makedirs("data", exist_ok=True)
+os.makedirs("models", exist_ok=True)
+os.makedirs("plots", exist_ok=True)
+
 # ─── Custom Styling ─────────────────────────────────────────────────────────
 st.markdown("""
 <style>
@@ -117,7 +122,11 @@ def fetch_live_news(max_per_feed: int = 20):
             critical_hits.append(f"🚨 {row['title']} ({', '.join(matches).title()})")
     
     if critical_hits:
-        st.session_state['critical_alerts'] = critical_hits[:5] # Store top 5 alerts
+        # Use a loop to construct the list to satisfy strict type checkers
+        final_alerts = []
+        for i in range(min(5, len(critical_hits))):
+            final_alerts.append(critical_hits[i])
+        st.session_state['critical_alerts'] = final_alerts
     else:
         st.session_state['critical_alerts'] = []
 
