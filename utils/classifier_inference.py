@@ -9,8 +9,8 @@ import torch
 logger = setup_logging()
 
 CRIME_CATEGORIES = [
-    'murder', 'rape', 'kidnapping', 'accident', 'sexual_harassment', 
-    'theft', 'burglary', 'robbery', 'fraud_cheating', 'crime_against_children', 'non_crime'
+    'murder', 'rape', 'kidnapping', 'sexual_harassment', 'crime_against_children', 
+    'theft', 'burglary', 'robbery', 'fraud_cheating', 'accident', 'non_crime'
 ]
 
 # Mapping keys to descriptive labels for better Zero-Shot inference
