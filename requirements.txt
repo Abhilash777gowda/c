@@ -2,6 +2,8 @@ pandas
 numpy
 scikit-learn
 torch
+torchvision
+pillow
 transformers>=4.40.0
 datasets
 beautifulsoup4
