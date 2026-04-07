@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import os
 import time
 from datetime import datetime
+from utils.helpers import setup_logging
+
+logger = setup_logging()
 
 st.set_page_config(
     page_title="CRIMSON-India Dashboard",
@@ -79,14 +82,14 @@ def load_data():
     return None
 
 
-def fetch_live_news(max_per_feed: int = 20):
+def fetch_live_news(max_per_feed: int = 20, skip_classification: bool = False):
     """Run the full real-time pipeline: scrape → clean → classify → save."""
     from scraper.rss_scraper import RSSNewsScraper
     from scraper.kannada_scraper import KannadaWebScraper
     from scraper.hindi_scraper import HindiWebScraper
     from scraper.regional_scraper import RegionalWebScraper
     from preprocessing.text_cleaner import TextCleaner
-    from utils.classifier_inference import classify_articles
+    from utils.classifier_inference import classify_articles, CRIME_CATEGORIES
 
     rss_scraper = RSSNewsScraper()
     df_rss = rss_scraper.scrape_all(max_per_feed=max_per_feed)
@@ -111,7 +114,14 @@ def fetch_live_news(max_per_feed: int = 20):
     df_raw['clean_text'] = df_raw['text'].apply(cleaner.clean_text)
     df_raw = df_raw[df_raw['clean_text'].str.len() > 0].reset_index(drop=True)
 
-    df_classified = classify_articles(df_raw.copy())
+    if skip_classification:
+        df_classified = df_raw.copy()
+        for cat in CRIME_CATEGORIES:
+            df_classified[cat] = 0
+        df_classified['non_crime'] = 1
+        logger.info("Skipping AI classification (Lite Mode active).")
+    else:
+        df_classified = classify_articles(df_raw.copy())
 
     # ─── Critical Incident Alerts ───────────────────────────────────────────
     CRITICAL_KEYS = ['murder', 'rape', 'kidnapping']
@@ -195,10 +205,11 @@ st.sidebar.markdown("---")
 st.sidebar.subheader("📡 Live Data Controls")
 
 articles_per_feed = st.sidebar.slider("Articles per source", 5, 30, 15, step=5)
+lite_mode = st.sidebar.checkbox("🚀 Lite Mode (Skip AI)", value=False, help="Skips heavy AI classification. Use this if Fetching fails on Streamlit Cloud.")
 
 if st.sidebar.button("🔄 Fetch Live News", use_container_width=True):
-    with st.spinner("Scraping Indian news RSS feeds..."):
-        df_new, msg = fetch_live_news(max_per_feed=articles_per_feed)
+    with st.spinner("Scraping Indian news feeds..."):
+        df_new, msg = fetch_live_news(max_per_feed=articles_per_feed, skip_classification=lite_mode)
     load_data.clear()  # invalidate cache
     st.sidebar.success(msg) if "✅" in msg else st.sidebar.error(msg)
     st.rerun()

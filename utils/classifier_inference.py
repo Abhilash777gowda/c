@@ -68,20 +68,24 @@ def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Data
         label_to_key = {v: k for k, v in DESCRIPTIVE_LABELS.items()}
 
         for idx, row in df.iterrows():
-            text = str(row[text_col]).strip()
-            if not text or len(text) < 10:
-                continue
+            try:
+                text = str(row[text_col]).strip()
+                if not text or len(text) < 10:
+                    continue
 
-            # Run zero-shot inference
-            # multi_label=True allows mapping to multiple crime types if relevant
-            result = classifier(text, labels, multi_label=True)
-            
-            # Map high-confidence results back to our category keys
-            for label, score in zip(result['labels'], result['scores']):
-                if score > 0.4:  # Threshold for detection
-                    key = label_to_key.get(label)
-                    if key:
-                        df.at[idx, key] = 1
+                # Run zero-shot inference
+                # multi_label=True allows mapping to multiple crime types if relevant
+                result = classifier(text, labels, multi_label=True)
+                
+                # Map high-confidence results back to our category keys
+                for label, score in zip(result['labels'], result['scores']):
+                    if score > 0.4:  # Threshold for detection
+                        key = label_to_key.get(label)
+                        if key:
+                            df.at[idx, key] = 1
+            except Exception as inner_e:
+                logger.warning(f"Failed to classify article at index {idx}: {inner_e}")
+                continue
             
             # If no crime categories found, mark as non_crime
             crime_found = any(df.at[idx, k] == 1 for k in CRIME_CATEGORIES if k != 'non_crime')

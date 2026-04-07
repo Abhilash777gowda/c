@@ -62,10 +62,20 @@ class RSSNewsScraper:
         records = []
         seen_urls = set()
 
+        import requests
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"}
+        
         for source, url in self.feeds.items():
             try:
                 logger.info(f"Fetching RSS feed: {source} ({url})")
-                feed = feedparser.parse(url)
+                
+                # Fetch content with headers first, then parse string
+                resp = requests.get(url, headers=headers, timeout=15)
+                if resp.status_code != 200:
+                    logger.warning(f"Status {resp.status_code} for {source}")
+                    continue
+                    
+                feed = feedparser.parse(resp.content)
                 fetched = 0
                 for entry in feed.entries[:max_per_feed]:
                     record = self._entry_to_dict(entry, source)
