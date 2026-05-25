@@ -329,26 +329,25 @@ elif page == "📊 Model Performance":
     }
     perf_df = pd.DataFrame(performance_data)
     
-    # Accuracy chart — horizontal bars so model names sit on the Y-axis and are easy to read
-    fig, ax = plt.subplots(figsize=(8, 4))
+    # Vertical grouped bar chart — original style
+    fig, ax = plt.subplots(figsize=(9, 5))
     bar_width = 0.35
     models = perf_df["Model Architecture"]
-    x = range(len(models))
+    x = list(range(len(models)))
 
-    bars1 = ax.barh([i + bar_width / 2 for i in x], perf_df["Accuracy"],
-                    height=bar_width, label="Accuracy", color="#4A90D9")
-    bars2 = ax.barh([i - bar_width / 2 for i in x], perf_df["F1 Score"],
-                    height=bar_width, label="F1 Score", color="#E85D5D")
+    bars1 = ax.bar([i - bar_width / 2 for i in x], perf_df["Accuracy"],
+                   width=bar_width, label="Accuracy", color="#4A90D9")
+    bars2 = ax.bar([i + bar_width / 2 for i in x], perf_df["F1 Score"],
+                   width=bar_width, label="F1 Score", color="#E85D5D")
 
-    ax.set_yticks(list(x))
-    ax.set_yticklabels(models, fontsize=10)
-    ax.set_xlim(0, 1.0)
-    ax.set_xlabel("Score")
+    ax.set_xticks(x)
+    ax.set_xticklabels(models, fontsize=10, wrap=True)
+    ax.set_ylim(0, 1.0)
+    ax.set_ylabel("Score")
     ax.set_title("Model Accuracy & F1 Score Comparison")
-    ax.legend(loc="lower right")
-    ax.invert_yaxis()   # highest scoring model at top
-    ax.bar_label(bars1, fmt="%.3f", padding=3, fontsize=8)
-    ax.bar_label(bars2, fmt="%.3f", padding=3, fontsize=8)
+    ax.legend(loc="upper right")
+    ax.bar_label(bars1, fmt="%.3f", padding=3, fontsize=9)
+    ax.bar_label(bars2, fmt="%.3f", padding=3, fontsize=9)
     fig.tight_layout()
     st.pyplot(fig)
     plt.close(fig)
