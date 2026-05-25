@@ -30,8 +30,8 @@ class TextCleaner:
         text = re.sub(r'http\S+|www\S+|https\S+', '', text, flags=re.MULTILINE)
         # Remove HTML tags
         text = re.sub(r'<.*?>', '', text)
-        # Remove special characters (keep alphanumeric + space + Devanagari + Kannada script)
-        text = re.sub(r'[^a-z0-9\s\u0900-\u097F\u0C80-\u0CFF]', '', text)
+        # Remove special characters (keep alphanumeric + space + Devanagari + Kannada + Tamil + Telugu)
+        text = re.sub(r'[^a-z0-9\s\u0900-\u097F\u0B80-\u0BFF\u0C00-\u0CFF]', '', text)
         # Collapse whitespace
         tokens = text.split()
         return ' '.join(tokens)
