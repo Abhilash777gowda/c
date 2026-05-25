@@ -5,16 +5,19 @@ from utils.helpers import setup_logging
 
 logger = setup_logging()
 
-# Free RSS feeds from major Indian news sources (Multilingual)
+# Crime-specific RSS feeds — only feeds VERIFIED to serve actual crime/incident articles
 RSS_FEEDS = {
-    "NDTV India": "https://feeds.feedburner.com/ndtvnews-india-news",
-    "Times of India": "https://timesofindia.indiatimes.com/rssfeedmostread.cms",
-    "The Hindu": "https://www.thehindu.com/news/national/feeder/default.rss",
-    "India Today": "https://www.indiatoday.in/rss/1206551",
-    "Hindustan Times": "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml",
-    "OneIndia Hindi": "https://hindi.oneindia.com/rss/hindi-news-fb.xml",
-    "OneIndia Tamil": "https://tamil.oneindia.com/rss/tamil-news-fb.xml",
-    "OneIndia Telugu": "https://telugu.oneindia.com/rss/telugu-news-fb.xml"
+    # TOI crime section (verified — serves crime articles)
+    "TOI Crime":            "https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms",
+    # Amar Ujala verified crime news (Hindi)
+    "Amar Ujala Crime":     "https://www.amarujala.com/rss/crime.xml",
+    # National India news for diversity
+    "NDTV India":           "https://feeds.feedburner.com/ndtvnews-india-news",
+    "Hindustan Times":      "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml",
+    # Regional
+    "OneIndia Tamil":       "https://tamil.oneindia.com/rss/tamil-news-fb.xml",
+    "OneIndia Telugu":      "https://telugu.oneindia.com/rss/telugu-news-fb.xml",
+    "OneIndia Kannada":     "https://kannada.oneindia.com/rss/kannada-news-fb.xml",
 }
 
 
