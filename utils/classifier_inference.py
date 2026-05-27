@@ -36,6 +36,13 @@ def get_zeroshot_classifier():
     global _zs_classifier
     if _zs_classifier is not None:
         return _zs_classifier
+        
+    import sys
+    # Instantly trigger heuristic mode on Streamlit Cloud or forced overrides to prevent memory leaks/crashes
+    if os.environ.get('FORCE_HEURISTIC') == 'true' or os.environ.get('HOSTNAME') == 'streamlit-cloud' or sys.platform == 'linux':
+        logger.info("Forcing Zero-Memory Heuristic Classifier (Cloud deployment / override detected).")
+        return "HEURISTIC"
+
     try:
         logger.info("Loading mDeBERTa multilingual Zero-Shot classifier...")
         clf = pipeline(
@@ -59,74 +66,138 @@ _HEURISTIC_KEYWORDS = {
         'corpse', 'hanged', 'lynched', 'beaten to death', 'mob lynching', 'dies in attack',
         'man dead', 'woman dead', 'youth dead', 'dies after', 'fatal attack', 'charred body',
         'encounter killing', 'hatya', 'kolai',
-        # Hindi murder/death keywords (Amar Ujala, Dainik Bhaskar style)
+        # Hindi
         'हत्या', 'कत्ल', 'मारा गया', 'वध', 'हत्यारों', 'लाश', 'शव', 'मृत', 'गोली मार', 'गोली',
         'छुरा', 'छुरा मार', 'जान से मारा', 'हत्यारों ने', 'डूब', 'डूबा', 'नदी में', 'कुएं में',
-        'हत्यारों', 'मौत', 'शव मिला', 'शव बरामद',
-        'ಹತ್ಯೆ', 'ಕೊಲೆ', 'ಮರ್ಡರ್',
-        'హత్య', 'హతుడు', 'చంపబడ్డాడు',
+        'मौत', 'शव मिला', 'शव बरामद',
+        # Kannada
+        'ಹತ್ಯೆ', 'ಕೊಲೆ', 'ಮರ್ಡರ್', 'ಹೆಣ', 'ಶವ',
+        # Telugu
+        'హత్య', 'హతుడు', 'చంపబడ్డాడు', 'శవం',
+        # Tamil
+        'கொலை', 'இறப்பு', 'படுகொலை', 'சடலம்'
     ],
     'rape': [
         'rape', 'raped', 'gang rape', 'gangrape', 'gang-rape', 'sexual assault',
         'sexually assaulted', 'sexual abuse', 'balatkar', 'minor raped',
         'woman raped', 'girl raped', 'student raped',
-        'ಅತ್ಯಾಚಾರ', 'ರೇಪ್', 'बलात्कार', 'दुष्कर्म', 'यौन उत्पीड़न',
-        'అత్యాచారం',
+        # Kannada
+        'ಅತ್ಯಾಚಾರ', 'ರೇಪ್', 'ಲೈಂಗಿಕ ದೌರ್ಜನ್ಯ',
+        # Hindi
+        'बलात्कार', 'दुष्कर्म', 'यौन उत्पीड़न', 'यौन शोषण',
+        # Telugu
+        'అత్యాచారం', 'లైంగిక దాడి',
+        # Tamil
+        'கற்பழிப்பு', 'பாலியல் வன்கொடுமை'
     ],
     'kidnapping': [
         'kidnap', 'kidnapped', 'kidnapping', 'abduct', 'abducted', 'abduction', 'hostage',
         'missing child', 'missing girl', 'missing boy', 'child missing', 'woman missing',
-        'apaharan', 'ಅಪಹರಣ', 'किडनैप', 'अपहरण', 'गुमशुदा', 'లాక్కెళ్ళారు',
+        'apaharan', 
+        # Kannada
+        'ಅಪಹರಣ', 'ಕಿಡ್ನ್ಯಾಪ್', 'ನಾಪತ್ತೆ',
+        # Hindi
+        'किडनैप', 'अपहरण', 'गुमशुदा', 'बंधक',
+        # Telugu
+        'కిడ్నాప్', 'అపహరణ', 'లాక్కెళ్ళారు',
+        # Tamil
+        'கடத்தல்', 'காணாமல்'
     ],
     'sexual_harassment': [
         'harassment', 'harassed', 'molest', 'molestation', 'molested', 'eve teasing',
         'eve-teasing', 'outrage of modesty', 'sexual harassment', 'stalking', 'stalked',
-        'ಕಿರುಕುಳ', 'छेड़छाड़', 'వేధింపు', 'పీడన',
+        # Kannada
+        'ಕಿರುಕುಳ', 'ಲೈಂಗಿಕ ಕಿರುಕುಳ',
+        # Hindi
+        'छेड़छाड़', 'उत्पीड़न', 'यौन प्रताड़ना',
+        # Telugu
+        'వేధింపు', 'పీడన',
+        # Tamil
+        'துன்புறுத்தல்', 'ஈவ்டீசிங்'
     ],
     'crime_against_children': [
         'pocso', 'child abuse', 'child sexual', 'minor girl', 'minor boy', 'minor raped',
         'child traffick', 'children traffick', 'child labour', 'juvenile', 'child victim',
         'school girl', 'teenage girl',
-        'ಮಕ್ಕಳ', 'बच्चे', 'नाबालिग', 'పిల్లల', 'బాలల',
+        # Kannada
+        'ಮಕ್ಕಳ', 'ಬಾಲಕ', 'ಬಾಲಕಿ', 'ಅಪ್ರಾಪ್ತ',
+        # Hindi
+        'बच्चे', 'नाबालिग', 'बाल विवाह', 'बाल श्रम',
+        # Telugu
+        'పిల్లల', 'బాలల', 'మైనర్',
+        # Tamil
+        'குழந்தை', 'சிறுமி', 'சிறுவன்'
     ],
     'theft': [
         'theft', 'stolen', 'thief', 'thieves', 'stealing', 'snatched', 'pickpocket',
         'shoplifting', 'loot', 'looted', 'chori', 'vehicle theft', 'bike theft',
         'jewellery stolen', 'cash stolen', 'mobile stolen',
-        'ಕಳ್ಳತನ', 'ಚೋರಿ', 'चोरी', 'దొంగతనం', 'దొంగ',
+        # Kannada
+        'ಕಳ್ಳತನ', 'ಚೋರಿ', 'ಕಳ್ಳ', 'ಕಳವು',
+        # Hindi
+        'चोरी', 'चोर गिरफ्तार', 'सामान चोरी',
+        # Telugu
+        'దొంగతనం', 'దొంగ', 'చౌర్యం',
+        # Tamil
+        'திருட்டு', 'களவாடப்பட்டது'
     ],
     'burglary': [
         'burglary', 'burgled', 'break-in', 'broke in', 'broken into', 'housebreak',
         'housebreaking', 'house robbery', 'house looted', 'home invasion',
-        'ದರೋಡೆ', 'सेंधमारी', 'దోపిడీ',
+        # Kannada
+        'ದರೋಡೆ', 'ಕನ್ನ ಹಾಕಿದ',
+        # Hindi
+        'सेंधमारी', 'घर में चोरी',
+        # Telugu
+        'దోపిడీ', 'ఇంట్లో దొంగతనం',
+        # Tamil
+        'கொள்ளை', 'வீடு புகுந்து'
     ],
     'robbery': [
         'robbery', 'robbed', 'dacoity', 'dacoit', 'dacoits', 'mugged', 'snatched',
         'armed robbery', 'bank robbery', 'chain snatching', 'snatching incident',
-        'ಲೂಟಿ', 'लूट', 'डकैती', 'దోపిడీ',
+        # Kannada
+        'ಲೂಟಿ', 'ಸರಗಳ್ಳತನ', 'ಸರ ಅಪಹರಣ',
+        # Hindi
+        'लूट', 'डकैती', 'झपटमारी',
+        # Telugu
+        'దోపిడీ', 'దోపిడి',
+        # Tamil
+        'வழிப்பறி', 'பறிப்பு'
     ],
     'fraud_cheating': [
         'fraud', 'fraudulent', 'cheated', 'cheating', 'scam', 'scammed', 'duped', 'fake',
         'phishing', 'cyber crime', 'cybercrime', 'online fraud', 'ponzi', 'forgery', 'forged',
         'swindled', 'conned', 'blackmail', 'extortion', 'impersonation', 'fake call',
         'investment fraud', 'job fraud', 'matrimonial fraud', 'UPI fraud',
-        'ವಂಚನೆ', 'மோசடி', 'धोखाधड़ी', 'ठगी', 'మోసం',
+        # Kannada
+        'ವಂಚನೆ', 'ವೆಂಚನೆ', 'ಮೋಸ', 'ಖೋಟಾ',
+        # Hindi
+        'धोखाधड़ी', 'ठगी', 'फर्जीवाड़ा', 'घोटाला', 'साइबर अपराध',
+        # Telugu
+        'మోసం', 'ఫోర్జరీ', 'కుంభకోణం',
+        # Tamil
+        'மோசடி', 'ஏமாற்று', 'போலி'
     ],
     'accident': [
         'accident', 'accidents', 'crashed', 'crash', 'collision', 'collided', 'collide',
         'road accident', 'vehicle accident', 'car accident', 'bike accident', 'mishap',
         'run over', 'hit and run', 'fatally injured', 'injured in', 'durghatna',
         'highway accident', 'truck accident', 'bus accident', 'falls from', 'fell from',
-        # Hindi accident keywords
-        'दुर्घटना', 'हादसा', 'यमुना', 'नदी में', 'डूबा', 'डूबने', 'तालाब', 'हादसे में', 'पलटी',
-        'ಅಪಘಾತ', 'ಡಿಕ್ಕಿ', 'ದುರಂತ', 'ప్రమాదం',
+        # Hindi
+        'दुर्घटना', 'हादसा', 'यमुना', 'नदी में', 'डूबा', 'डूबने', 'तालाब', 'हादसे में', 'पलटी', 'घायल',
+        # Kannada
+        'ಅಪಘಾತ', 'ಡಿಕ್ಕಿ', 'ದುರಂತ', 'ಬಲಿ', 'ಗಾಯ',
+        # Telugu
+        'ప్రమాదం', 'ఢీకొట్టింది', 'దుర్మరణం',
+        # Tamil
+        'விபத்து', 'மோதியது', 'உயிரிழப்பு'
     ],
 }
 
 # High-signal Indian crime-reporting phrases — if these appear,
 # the article is almost certainly crime news
 _CRIME_INDICATOR_PHRASES = [
-    # English phrases
     ('murder',         ['encounter', 'gang war', 'contract killing', 'supari killing',
                         'murder accused', 'murder case', 'murder fir', 'murder arrested',
                         'murder suspect', 'dead body recovered', 'body recovered',
@@ -139,7 +210,7 @@ _CRIME_INDICATOR_PHRASES = [
                         'rape survivor', 'rape victim']),
     ('kidnapping',     ['kidnapping accused', 'kidnapping case', 'child recovered',
                         'rescued from kidnappers', 'ransom demand', 'ransom paid']),
-    # Hindi high-signal phrases (Amar Ujala, Dainik Bhaskar patterns)
+    # Hindi high-signal phrases
     ('murder',         ['गिरफ्तार', 'हत्यारा', 'हत्यारों को', 'टारगेट किलिंग', 'एनकाउंटर',
                         'गैंग वार', 'आरोपी गिरफ्तार', 'हमलावर', 'गोली चलाई']),
     ('rape',           ['बलात्कार आरोपी', 'दुष्कर्म आरोपी', 'दुष्कर्म का मामला']),
@@ -159,6 +230,9 @@ def _heuristic_classify(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Da
             str(row.get('text', '')) + " " +
             str(row.get(text_col, ''))
         ).lower()
+
+        # Sanity check: replace nan strings from pandas conversion
+        raw_text = raw_text.replace(" nan ", " ")
 
         crime_found = False
         if len(raw_text) > 5:
@@ -186,7 +260,7 @@ def _heuristic_classify(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Da
 def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.DataFrame:
     """
     Classify articles using a Multilingual Zero-Shot pipeline (locally)
-    or a lightning-fast keyword heuristic (on Streamlit Cloud) to prevent crashes.
+    with a lightning-fast keyword heuristic fallback to prevent false non-crime categorizations.
     """
     if df.empty:
         return df
@@ -201,7 +275,7 @@ def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Data
         if classifier == "HEURISTIC":
             return _heuristic_classify(df, text_col)
 
-        # Fallback to standard Zero-Shot (Local PC)
+        # Multilingual Zero-Shot (Local PC)
         labels = list(DESCRIPTIVE_LABELS.values())
         label_to_key = {v: k for k, v in DESCRIPTIVE_LABELS.items()}
 
@@ -211,24 +285,55 @@ def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Data
         for i, (idx, row) in enumerate(df.iterrows()):
             if i % 2 == 0 or i == total - 1:
                 progress_bar.progress(min((i + 1) / total, 1.0), text=f"AI Classification in progress... ({i + 1}/{total} articles)")
+            
+            crime_found = False
             try:
                 text = str(row[text_col]).strip()
-                if not text or len(text) < 10:
-                    continue
+                if text == "nan":
+                    text = ""
 
-                # Run zero-shot inference
-                result = classifier(text, labels, multi_label=True)
-                
-                for label, score in zip(result['labels'], result['scores']):
-                    if score > 0.4:
-                        key = label_to_key.get(label)
-                        if key:
-                            df.at[idx, key] = 1
+                if len(text) >= 10:
+                    result = classifier(text, labels, multi_label=True)
+                    for label, score in zip(result['labels'], result['scores']):
+                        if score > 0.4:
+                            key = label_to_key.get(label)
+                            if key:
+                                df.at[idx, key] = 1
+                                if key != 'non_crime':
+                                    crime_found = True
+
+                # --- Double-Layer Hybrid Fallback: Run Heuristic if AI did not detect a crime ---
+                if not crime_found:
+                    raw_text = (
+                        str(row.get('title', '')) + " " +
+                        str(row.get('text', '')) + " " +
+                        str(row.get(text_col, ''))
+                    ).lower().replace(" nan ", " ")
+                    
+                    for cat, words in _HEURISTIC_KEYWORDS.items():
+                        if any(w in raw_text for w in words):
+                            df.at[idx, cat] = 1
+                            crime_found = True
+
+                    if not crime_found:
+                        for cat, phrases in _CRIME_INDICATOR_PHRASES:
+                            if any(p in raw_text for p in phrases):
+                                df.at[idx, cat] = 1
+                                crime_found = True
+                                break
             except Exception as inner_e:
                 logger.warning(f"Failed to classify article at index {idx}: {inner_e}")
-                continue
-            
-            crime_found = any(df.at[idx, k] == 1 for k in CRIME_CATEGORIES if k != 'non_crime')
+                # Fallback to heuristic on exception
+                raw_text = (
+                    str(row.get('title', '')) + " " +
+                    str(row.get('text', ''))
+                ).lower().replace(" nan ", " ")
+                for cat, words in _HEURISTIC_KEYWORDS.items():
+                    if any(w in raw_text for w in words):
+                        df.at[idx, cat] = 1
+                        crime_found = True
+                        break
+
             if not crime_found:
                 df.at[idx, 'non_crime'] = 1
 
@@ -236,6 +341,7 @@ def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Data
         logger.info(f"Classified {len(df)} articles using Multilingual Zero-Shot Pipeline.")
     except Exception as e:
         logger.error(f"Classification failed: {e}")
+        return _heuristic_classify(df, text_col)
 
     return df
 

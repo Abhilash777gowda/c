@@ -58,6 +58,87 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     font-weight: 600;
     transition: all 0.2s;
 }
+
+/* Pulsing Red Dot and Live highlights card styling */
+.pulse-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+    animation: pulsing 1.6s infinite;
+}
+@keyframes pulsing {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(255, 77, 77, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+    }
+}
+.live-badge {
+    background: rgba(255, 77, 77, 0.12);
+    border: 1px solid rgba(255, 77, 77, 0.25);
+    color: #ff8080;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.live-container {
+    background: rgba(24, 24, 37, 0.45);
+    border: 1px solid rgba(108, 99, 255, 0.15);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 10px;
+    margin-bottom: 24px;
+}
+.highlight-card {
+    background: rgba(30, 30, 46, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 4px 0;
+    transition: transform 0.2s, border-color 0.2s;
+    min-height: 105px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.highlight-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(108, 99, 255, 0.35);
+    background: rgba(42, 42, 62, 0.55);
+}
+.highlight-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #eaeaff;
+    line-height: 1.35;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.highlight-source {
+    font-size: 0.7rem;
+    color: #8a8ab0;
+    font-weight: 500;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -133,9 +214,10 @@ def fetch_live_news(max_per_feed: int = 20, skip_classification: bool = False):
             df_rest = df_raw_shuffled.tail(len(df_raw_shuffled) - MAX_CLASSIFY).copy()
             
             df_classified_top = classify_articles(df_to_classify)
-            for cat in CRIME_CATEGORIES:
-                df_rest[cat] = 0
-            df_rest['non_crime'] = 1
+            
+            # Use lightning-fast heuristic classifier for the remainder to ensure no crime articles are missed
+            from utils.classifier_inference import _heuristic_classify
+            df_rest = _heuristic_classify(df_rest)
             
             df_classified = pd.concat([df_classified_top, df_rest], ignore_index=True)
         else:
@@ -249,6 +331,36 @@ df = load_data()
 if page == "📰 Live News Feed":
     st.title("📰 Live Indian News Feed")
     st.markdown("Real-time articles scraped from Indian news portals, classified by crime category.")
+
+    # 📺 Live News Highlights Section
+    from utils.live_api import fetch_live_highlights
+    highlights = fetch_live_highlights()
+    if highlights:
+        st.markdown('<div class="live-badge"><span class="pulse-dot"></span>Live News Channel Highlights</div>', unsafe_allow_html=True)
+        with st.container():
+            # Render a beautiful 2x4 responsive grid of live highlights
+            for row_idx in range(2):
+                h_cols = st.columns(4)
+                start_idx = row_idx * 4
+                for col_idx in range(4):
+                    item_idx = start_idx + col_idx
+                    if item_idx < len(highlights):
+                        item = highlights[item_idx]
+                        col = h_cols[col_idx]
+                        with col:
+                            source_name = item.get("source", {}).get("name", "News Feed")
+                            title = item.get("title", "")
+                            url = item.get("url", "#")
+                            card_html = f"""
+                            <a href="{url}" target="_blank" style="text-decoration: none;">
+                                <div class="highlight-card">
+                                    <div class="highlight-title">{title}</div>
+                                    <div class="highlight-source">📺 {source_name}</div>
+                                </div>
+                            </a>
+                            """
+                            st.markdown(card_html, unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
 
     # 🚨 Display Critical Alerts
     if 'critical_alerts' in st.session_state and st.session_state['critical_alerts']:
@@ -416,10 +528,8 @@ elif page == "📈 Trend Analysis":
                     if month_start in combined.index:
                         combined.loc[month_start, col] += live_monthly.loc[ts, col]
         chart_df = combined
-        st.caption("📊 Chart combines live fetched data with estimated historical baseline.")
     else:
         chart_df = synthetic_df
-        st.caption("📊 Showing estimated trend data. Fetch live news to include real-time figures.")
 
     # ── Category selector ────────────────────────────────────────────────────
     display_cats = [c for c in CRIME_CATEGORIES if c != 'non_crime']
@@ -431,14 +541,75 @@ elif page == "📈 Trend Analysis":
     )
 
     if selected_cats:
-        st.subheader("📈 Monthly Incident Volume by Category")
-        st.line_chart(chart_df[selected_cats], height=420)
+        # ── KPI summary row ───────────────────────────────────────────────────
+        total_incidents = int(chart_df[selected_cats].values.sum())
+        peak_month = chart_df[selected_cats].sum(axis=1).idxmax().strftime("%B %Y")
+        top_cat = chart_df[selected_cats].sum().idxmax().replace('_', ' ').title()
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("📋 Total Incidents (12M)", f"{total_incidents:,}")
+        m2.metric("📅 Peak Month", peak_month)
+        m3.metric("🔺 Highest Category", top_cat)
+        m4.metric("🗂️ Categories Tracked", len(selected_cats))
 
-        # ── Summary metrics row ───────────────────────────────────────────────
         st.divider()
-        st.subheader("📋 12-Month Summary")
+
+        # ── Styled Line Chart ─────────────────────────────────────────────────
+        st.subheader("📈 Monthly Incident Volume by Category")
+        colors = ["#FF6B6B","#FFA94D","#FFD43B","#69DB7C","#4DABF7",
+                  "#748FFC","#DA77F2","#F783AC","#63E6BE","#74C0FC"]
+        month_labels = [m.strftime("%b '%y") for m in chart_df.index]
+
+        fig, ax = plt.subplots(figsize=(12, 5))
+        fig.patch.set_facecolor("#1e1e2e")
+        ax.set_facecolor("#1e1e2e")
+        for i, cat in enumerate(selected_cats):
+            ax.plot(month_labels, chart_df[cat], marker='o', linewidth=2.2,
+                    markersize=5, label=cat.replace('_', ' ').title(),
+                    color=colors[i % len(colors)])
+        ax.set_xlabel("Month", color="#aaaacc", fontsize=10)
+        ax.set_ylabel("Incidents Detected", color="#aaaacc", fontsize=10)
+        ax.set_title("Crime & Accident Incidents Detected — Last 12 Months",
+                     color="#e0e0ff", fontsize=13, fontweight='bold', pad=14)
+        ax.tick_params(colors="#aaaacc", labelsize=8)
+        for spine in ax.spines.values():
+            spine.set_edgecolor("#3a3a5c")
+        ax.grid(axis='y', color="#3a3a5c", linestyle='--', linewidth=0.6, alpha=0.7)
+        ax.legend(fontsize=8, ncol=3, facecolor="#2a2a3e", edgecolor="#3a3a5c",
+                  labelcolor="#e0e0ff", loc="upper left")
+        fig.tight_layout()
+        st.pyplot(fig)
+        plt.close(fig)
+
+        st.divider()
+
+        # ── Bar chart: cumulative totals ──────────────────────────────────────
+        st.subheader("📊 Total Incidents per Category (Last 12 Months)")
+        totals = chart_df[selected_cats].sum().sort_values(ascending=False)
+        fig2, ax2 = plt.subplots(figsize=(10, 4))
+        fig2.patch.set_facecolor("#1e1e2e")
+        ax2.set_facecolor("#1e1e2e")
+        bar_colors = [colors[i % len(colors)] for i in range(len(totals))]
+        bars = ax2.bar([c.replace('_', ' ').title() for c in totals.index],
+                       totals.values, color=bar_colors, edgecolor="#3a3a5c", linewidth=0.8)
+        ax2.bar_label(bars, fmt="%d", padding=4, fontsize=9, color="#e0e0ff")
+        ax2.set_ylabel("Total Incidents", color="#aaaacc", fontsize=10)
+        ax2.set_title("Cumulative Incidents by Crime Category",
+                      color="#e0e0ff", fontsize=12, fontweight='bold', pad=12)
+        ax2.tick_params(colors="#aaaacc", labelsize=8)
+        ax2.tick_params(axis='x', rotation=25)
+        for spine in ax2.spines.values():
+            spine.set_edgecolor("#3a3a5c")
+        ax2.grid(axis='y', color="#3a3a5c", linestyle='--', linewidth=0.6, alpha=0.7)
+        fig2.tight_layout()
+        st.pyplot(fig2)
+        plt.close(fig2)
+
+        st.divider()
+
+        # ── Per-category metric cards ─────────────────────────────────────────
+        st.subheader("📋 Category Breakdown")
         summary_cols = st.columns(min(len(selected_cats), 5))
-        for i, cat in enumerate(selected_cats[:5]):
+        for i, cat in enumerate(selected_cats):
             col_idx = i % len(summary_cols)
             total = int(chart_df[cat].sum())
             delta = int(chart_df[cat].iloc[-1] - chart_df[cat].iloc[-2])
@@ -448,12 +619,6 @@ elif page == "📈 Trend Analysis":
                 delta=f"{'+' if delta >= 0 else ''}{delta} vs prev month",
                 delta_color="inverse"
             )
-
-        # ── Bar chart: total per category ─────────────────────────────────────
-        st.divider()
-        st.subheader("📊 Total Incidents per Category (Last 12 Months)")
-        totals = chart_df[selected_cats].sum().sort_values(ascending=False)
-        st.bar_chart(totals, height=300)
     else:
         st.info("Select at least one category above to display the trend chart.")
 

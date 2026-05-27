@@ -13,7 +13,7 @@ df_raw = pd.DataFrame([
 df_raw['clean_text'] = df_raw.apply(lambda x: x['title'] + ' ' + x['summary'], axis=1)
 
 import os
-os.environ['HOSTNAME'] = 'linux' # Trigger heuristic
+os.environ['FORCE_HEURISTIC'] = 'true'
 
 print("Classifying...")
 df_classified = classify_articles(df_raw)

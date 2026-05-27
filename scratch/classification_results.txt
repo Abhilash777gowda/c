@@ -1,0 +1,15 @@
+=== STARTING DIRECT HEURISTIC CLASSIFIER TESTING ===
+
+--- RESULTS ---
+[MURDER] Headline: Man shot dead in Delhi by contract killers
+[THEFT] Headline: Gold jewelry stolen from bank locker in Chennai
+[FRAUD_CHEATING] Headline: Cyber fraud gang arrested for duplicate UPI app scam
+[ACCIDENT] Headline: Five dead in terrible head-on truck collision on national highway
+[MURDER] Headline: ಬೆಂಗಳೂರು: ರಾಜಕೀಯ ದ್ವೇಷಕ್ಕೆ ಯುವಕನ ಭೀಕರ ಕೊಲೆ
+[BURGLARY, ROBBERY] Headline: ಮೈಸೂರು ಬ್ಯಾಂಕ್‌ನಲ್ಲಿ ಭಾರಿ ದರೋಡೆ: ಚಿನ್ನಾಭರಣ ಲೂಟಿ
+[ACCIDENT] Headline: ಕಾರು ಮತ್ತು ಲಾರಿ ನಡುವೆ ಭೀಕರ ಅಪಘಾತ: ಸ್ಥಳದಲ್ಲೇ ಇಬ್ಬರು ಸಾವು
+[MURDER] Headline: दिल्ली में दिनदहाड़े महिला की गोली मारकर हत्या
+[THEFT, BURGLARY] Headline: घर में घुसे चोरों ने लाखों की नगदी और जेवर चोरी किए
+[NON_CRIME] Headline: India wins spectacular cricket match against Australia
+[NON_CRIME] Headline: Stock market hits all-time high amid positive global cues
+=================================================

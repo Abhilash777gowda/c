@@ -5,16 +5,29 @@ from utils.helpers import setup_logging
 
 logger = setup_logging()
 
-# Crime-specific RSS feeds — only feeds VERIFIED to serve actual crime/incident articles
+# Expanded RSS feeds including standard and regional versions of requested papers
 RSS_FEEDS = {
-    # TOI crime section (verified — serves crime articles)
+    # TOI (verified — serves crime and general articles)
     "TOI Crime":            "https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms",
+    "Times of India":       "https://timesofindia.indiatimes.com/rssfeeds/2947300.cms",
+    
+    # The Hindu (National News)
+    "The Hindu":            "https://www.thehindu.com/news/national/feeder/default.rss",
+    
     # Amar Ujala verified crime news (Hindi)
     "Amar Ujala Crime":     "https://www.amarujala.com/rss/crime.xml",
+    
     # National India news for diversity
     "NDTV India":           "https://feeds.feedburner.com/ndtvnews-india-news",
     "Hindustan Times":      "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml",
-    # Regional
+    
+    # Regional / Karnataka News (Prajavani, Vijay Karnataka, Udayavani, Vijayavani)
+    "Prajavani":            "https://www.prajavani.net/rssfeeds/karnataka.xml",
+    "Vijay Karnataka":      "https://vijaykarnataka.com/rssfeeds/21283013.cms",
+    "Udayavani":            "https://www.udayavani.com/category/state/feed",
+    "Vijayavani":           "https://www.vijayavani.net/feed",
+    
+    # Other regional feeds
     "OneIndia Tamil":       "https://tamil.oneindia.com/rss/tamil-news-fb.xml",
     "OneIndia Telugu":      "https://telugu.oneindia.com/rss/telugu-news-fb.xml",
     "OneIndia Kannada":     "https://kannada.oneindia.com/rss/kannada-news-fb.xml",
