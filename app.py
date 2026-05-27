@@ -139,6 +139,64 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     color: #8a8ab0;
     font-weight: 500;
 }
+/* Breaking Critical News Alert Banner styling */
+.breaking-banner {
+    background: linear-gradient(135deg, rgba(74, 20, 20, 0.65) 0%, rgba(20, 20, 35, 0.75) 100%);
+    border: 1px dashed rgba(255, 77, 77, 0.45);
+    border-left: 5px solid #ff4d4d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px 0 rgba(255, 77, 77, 0.12);
+}
+.breaking-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 77, 77, 0.15);
+    border: 1px solid rgba(255, 77, 77, 0.35);
+    color: #ff9999;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+.breaking-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7);
+    animation: pulsing 1.6s infinite;
+}
+.breaking-headline {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #ffffff !important;
+    line-height: 1.25;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.breaking-body {
+    font-size: 0.96rem;
+    color: #ddddf0;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.breaking-meta {
+    font-size: 0.8rem;
+    color: #aaaacc;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 12px;
+}
+.breaking-meta span {
+    margin-right: 12px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -373,6 +431,40 @@ if page == "📰 Live News Feed":
     if df is None or 'source' not in df.columns:
         st.warning("No live data yet. Click **🔄 Fetch Live News** in the sidebar to get started.")
     else:
+        # 🚨 Breaking Critical Alert Banner
+        critical_df = df[(df['murder'] == 1) | (df['rape'] == 1) | (df['kidnapping'] == 1)] if ('murder' in df.columns and 'rape' in df.columns and 'kidnapping' in df.columns) else pd.DataFrame()
+        if not critical_df.empty:
+            critical_df = critical_df.sort_values('date', ascending=False)
+            breaking_art = critical_df.iloc[0]
+            
+            breaking_title = breaking_art.get('title', 'No Title')
+            breaking_text = breaking_art.get('text', '')
+            breaking_source = breaking_art.get('source', 'Unknown')
+            breaking_date = breaking_art.get('date', '')
+            breaking_location = breaking_art.get('location', 'Unknown')
+            
+            # Find which critical categories it matches to show in badge
+            badges = []
+            if breaking_art.get('murder') == 1: badges.append("Murder")
+            if breaking_art.get('rape') == 1: badges.append("Rape")
+            if breaking_art.get('kidnapping') == 1: badges.append("Kidnapping")
+            badge_text = " / ".join(badges) if badges else "CRITICAL INCIDENT"
+
+            st.markdown(f"""
+            <div class="breaking-banner">
+                <div class="breaking-badge">
+                    <span class="breaking-pulse"></span>🚨 BREAKING CRITICAL ALERT: {badge_text}
+                </div>
+                <div class="breaking-headline">{breaking_title}</div>
+                <div class="breaking-body">{breaking_text}</div>
+                <div class="breaking-meta">
+                    <span>📍 <b>Location:</b> {breaking_location}</span> | 
+                    <span>📰 <b>Source:</b> {breaking_source}</span> | 
+                    <span>📅 <b>Date:</b> {breaking_date}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
         # Filters
         col1, col2, col3 = st.columns([2, 2, 1])
         with col1:
