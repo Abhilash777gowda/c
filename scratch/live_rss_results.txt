@@ -1,0 +1,84 @@
+=== LIVE RSS FEED CLASSIFICATION TEST (80 articles) ===
+[NON_CRIME] TOI Crime | 'Varun Salman nahi ban sakta': Abhijeet SLAMS 'Chunnari' remix
+[NON_CRIME] TOI Crime | Gangai Amaran slams rumours about Ilaiyaraaja
+[NON_CRIME] TOI Crime | Bad Bunny voices “Pizza with Sunglasses” in 'Toy Story 5'
+[NON_CRIME] TOI Crime | THESE Malayalam and Tamil stars faced restrictions and bans
+[NON_CRIME] TOI Crime | Zoe Ball learns her family history in 'Who Do You Think You Are?'
+[NON_CRIME] TOI Crime | Matthew Perry's family submits emotional statements before hearing
+[NON_CRIME] TOI Crime | 'House of the Dragon' S3: Battle of the Gullet to be CRAZIEST episode
+[NON_CRIME] TOI Crime | 'Vaat laga di': Internet reacts to Varun's 'Chunari Chunari'
+[NON_CRIME] TOI Crime | Meghan Markle faces backlash over Princess Lilibet post
+[NON_CRIME] TOI Crime | Vinnie Jones: Net Worth
+[NON_CRIME] The Hindu | Telangana SIR | Directions issued to conduct awareness programmes in urban pockets
+[NON_CRIME] The Hindu | Drones to monitor traffic, track suspects and power aerial surveillance in Hyderabad’s Malkajgiri
+[NON_CRIME] The Hindu | CPI(M) condemns ED raids on former Kerala CM Pinarayi Vijayan
+[NON_CRIME] The Hindu | Overnight rains lash Hyderabad and other parts of Telangana
+[NON_CRIME] The Hindu | Supreme Court hearing on Bihar SIR LIVE: SC to pronounce verdict
+[NON_CRIME] The Hindu | Pinarayi Vijayan’s political career timeline
+[NON_CRIME] The Hindu | ED raids former Kerala CM Pinarayi Vijayan’s houses in CMRL pay-off case
+[NON_CRIME] The Hindu | Centre notifies resolution on high-level committee on demographic changes
+[NON_CRIME] The Hindu | Haryana lawyer moves Election Commission to register Cockroach Janta Party
+[NON_CRIME] The Hindu | Mundamveli residents lay day-long siege to GCDA headquarters
+[MURDER] Amar Ujala Crime | 10 रुपये के लिए हत्या: सब्जी विक्रेता के सिर पर मारी ईंटें, फल के बकाया पैसे मांगने पर युवकों ने किया हमला
+[NON_CRIME] Amar Ujala Crime | जालंधर में देर रात जिम से लौट रहे किशोर पर ताबड़तोड़ फायरिंग
+[THEFT] Amar Ujala Crime | Bahadurgarh: एयरफोर्स सार्जेंट के सूने मकान में लाखों की चोरी, नकदी व जेवरात लेकर फरार हुए चोर
+[MURDER] Amar Ujala Crime | Jalandhar: देर रात जिम से लौट रहे किशोर पर ताबड़तोड़ फायरिंग, गले में मारी गोली; हालत गंभीर
+[MURDER] Amar Ujala Crime | Karnal: खेतों में मिला युवक का शव, चेहरे पर तेजाब डालकर हत्या का आरोप; घर से बुलाकर ले गए थे युवक
+[NON_CRIME] Amar Ujala Crime | रायकोट में कांग्रेस प्रत्याशी जगदेव सिंह जग्गा पर जानलेवा हमला
+[MURDER] Amar Ujala Crime | Panipat: वैसर गांव में युवक की गला दबाकर हत्या, देर रात हुई वारदात; आरोपी ने खुद पुलिस को फोन किया
+[NON_CRIME] Amar Ujala Crime | जालंधर में नवविवाहिता ने दी जान: छह माह पहले की थी लव मैरिज, काम पर गया था वेटर पति; फंदे से लटकती मिली
+[MURDER] Amar Ujala Crime | मजीठा में ASI की गोली मारकर हत्या
+[NON_CRIME] Amar Ujala Crime | दिलजीत दोसांझ के घर को उड़ाने की धमकी: अधिकारियों को आया ईमेल, मेयर दफ्तर में बम ब्लास्ट की धमकी; सर्च शुरू
+[NON_CRIME] NDTV India | Ex-Kerala Chief Minister Pinarayi Vijayan's House Raided By Probe Agency
+[NON_CRIME] NDTV India | Siddaramaiah Pushing For Multiple Deputy Chief Ministers, Will DK Shivakumar Agree?
+[NON_CRIME] NDTV India | Indian Air Force Introduces GATE-Based Entry For Technical Branch Officers; No AFCAT Written Exam
+[NON_CRIME] NDTV India | 'Rs 2.2 Lakh Rent Due': 'Mohammad Deepak' Plans To Sell Gym, Relocate
+[NON_CRIME] NDTV India | Opinion: Opinion | Degrees, SUVs, Gold: Why India's Most 'Qualified' Men Often Demand The Steepest Dowries
+[NON_CRIME] NDTV India | Pulwama Attack Mastermind Seen With AK-47 In Video Days Before Death
+[SEXUAL_HARASSMENT] NDTV India | Sexual Harassment Accused Gets Bail With One Year Ban On Social Media
+[NON_CRIME] NDTV India | Weather Live Updates: Yellow Alert For Heat Wave In Delhi Today, Relief Likely On Friday
+[NON_CRIME] NDTV India | Israel Opens 1 Year Foreign Affairs Scholarship Programme; Check Eligibility And Deadline
+[MURDER] NDTV India | 3 Killed, 5 Injured As Speeding Truck Rams Devotees Near UP Temple: Cops
+[NON_CRIME] Hindustan Times | India tears into Pak at UN, calls out doctrine to ‘bleed' neighbour by ‘thousand cuts’
+[NON_CRIME] Hindustan Times | Traveller from Uganda isolated in Bengaluru after showing suspected Ebola symptoms
+[NON_CRIME] Hindustan Times | Karnataka power tussle Live: Cabinet berth for CM Siddaramaiah's son on cards amid buzz around his resignation
+[NON_CRIME] Hindustan Times | Ex-Kerala CM Pinarayi Vijayan's house raided by ED in money laundering case
+[NON_CRIME] Hindustan Times | Carney meets Goyal, calls India-Canada trade deal a game changer
+[NON_CRIME] Hindustan Times | 'Special exam for students who skip paper on Eid': DU tells court after Muslim student's plea
+[NON_CRIME] Hindustan Times | Scores head to Bangladesh border amid Bengal’s migrant crackdown
+[NON_CRIME] Hindustan Times | CBSE 'ignored' calls for regional trials before OSM rollout for Class 12 board exam evaluation
+[NON_CRIME] Hindustan Times | SC sets aside MHA order rejecting IPS officer’s VRS over CAA protests
+[NON_CRIME] Hindustan Times | SC judgment today on SIR exercise challenge
+[NON_CRIME] OneIndia Tamil | எஸ்-400 ஏவுகணை அமைப்புகளை களமிறக்கும் இந்தியா.. ரஷ்யாவுடன் அவசர டீலிங்.. திடீர்ன்னு என்ன ஆனது?
+[NON_CRIME] OneIndia Tamil | தமிழ்நாடு 69% இட ஒதுக்கீடு.. உச்சநீதிமன்றத்தில் இன்று முக்கிய விசாரணை.. விஜய்க்கு பெரிய சவால்
+[NON_CRIME] OneIndia Tamil | இந்தியாவை பந்தாட வரும் பிரச்சனை.. எல் நினோ + ஹார்முஸ் நெருக்கடி.. RBI-க்கு தலை சுற்றுகிறது!
+[ACCIDENT] OneIndia Tamil | 90% பேர் உயிரிழப்பு.. WHO கூட எச்சரிக்கை விடுத்தாச்சு.. ஆனாலும் எபோலாவுக்கு வேக்சின் இல்லை.. ஏன்?
+[NON_CRIME] OneIndia Tamil | நாளுக்கு நாள் மோசமாகும் இந்தியா.. குட்டி குட்டி நாடெல்லாம் நம்மை முந்திக்கொண்டு செல்கிறது!
+[NON_CRIME] OneIndia Tamil | மே 29.. நாள் குறித்த LIC.. மக்களே ரெடியாக இருங்க.. உங்க கணக்கிற்கு வரும் சர்ப்ரைஸ்!
+[NON_CRIME] OneIndia Tamil | இரு துருவத்தில் பயணிக்கும் இந்தியா - அமெரிக்கா.. முதலீட்டாளர்களே இதையெல்லாம் நோட் பண்ணுங்கப்பா!!
+[NON_CRIME] OneIndia Tamil | மீண்டும் வெடிக்கும் போர்..? ஈரானின் பதில் தாக்குதலில் ஷாக்கான அமெரிக்கா.. சிக்கிய F-35 பைட்டர் ஜெட்!
+[NON_CRIME] OneIndia Tamil | பாகிஸ்தான் கூட டிரம்ப்பை மதிக்கல.. அமெரிக்காவை சீண்டும் ஷெரீப் அரசு.. இனி தான் இருக்கு சம்பவம்!
+[NON_CRIME] OneIndia Tamil | தவெகவில் புதிய அதிகார மையம்.. கூடுதல் பவரோடு ஆதவ் அர்ஜுனா, புஸ்ஸி ஆனந்த்.. கவனிச்சீங்களா?
+[NON_CRIME] OneIndia Telugu | భారీగా దిగొచ్చిన బంగారం ధరలు! ఈరోజు మార్కెట్ రేట్లు ఇవే!
+[NON_CRIME] OneIndia Telugu | గ్రామాలలో ఈవీ విప్లవం.. వాటికి 13లక్షల సబ్సిడీ, తెలంగాణా సర్కార్ కీలకనిర్ణయం!
+[NON_CRIME] OneIndia Telugu | 90 నియోజకవర్గాల్లో సరికొత్త డిజిటల్ రైతుబజార్లు..
+[NON_CRIME] OneIndia Telugu | TTD: తిరుమల లో మరో వైకుంఠం క్యూ కాంప్లెక్స్, శ్రీవారి భక్తులు ఇక నుంచి..!!
+[NON_CRIME] OneIndia Telugu | కుప్పకూలిన CBSE వ్యవస్థ.. ఐఐటీ నిపుణుల రంగప్రవేశం!
+[NON_CRIME] OneIndia Telugu | అర్ద్రరాత్రి నుంచి భారీ వర్షాలు, గాలివాన బీభత్సం - ఈ జిల్లాలకు తాజా హెచ్చరికలు..!!
+[NON_CRIME] OneIndia Telugu | నెతన్యాహు నరమేధం: 31 మంది మృతి, హమాస్ కొత్త చీఫ్ ఖతం
+[NON_CRIME] OneIndia Telugu | జగన్ సరికొత్త ‘SIR’ ఫార్ములా.. స్థానిక సమరానికి సిద్ధమా..?
+[NON_CRIME] OneIndia Telugu | రేపే సీఎం రాజీనామా? కొడుక్కి డిప్యూటీ సీఎం పదవి! కానీ..
+[NON_CRIME] OneIndia Telugu | లోకేష్ నాయకత్వంలో ఫస్ట్ టైమ్.. 2029 ఎన్నికల రోడ్‌మ్యాప్ రెడీ!
+[NON_CRIME] OneIndia Kannada | ನೀವು ಹೇಳಿದಂತೆ - ನಾನು ನುಡಿದಂತೆಯೇ ನಡೆದುಕೊಳ್ಳುವೆ: ರಾಹುಲ್‌ ಗಾಂಧಿಗೆ ಸಿದ್ದರಾಮಯ್ಯ ನಿಷ್ಠೆ!
+[NON_CRIME] OneIndia Kannada | Karnataka Weather: ಬೆಂಗಳೂರು ಸೇರಿ ಕರ್ನಾಟಕದ ಈ ಭಾಗಗಳಲ್ಲಿ ಜೂನ್ 3ರ ವರೆಗೆ ಮಳೆ, ಯೆಲ್ಲೋ & ಆರೆಂಜ್ ಅಲರ್ಟ್
+[NON_CRIME] OneIndia Kannada | Karnataka Politics: ಡಿ.ಕೆ ಶಿವಕುಮಾರ್‌ಗೆ ಪಟ್ಟಾಭಿಷೇಕದ ಜೊತೆ ಸಿದ್ದರಾಮಯ್ಯ ನಾಲ್ವರು ಆಪ್ತರಿಗೆ ಡಿಸಿಎಂ ಹುದ್ದೆ ಸಾಧ್ಯತೆ
+[NON_CRIME] OneIndia Kannada | Venkatesh Iyer: ಕೊನೆಗೂ ನಟ ಅಲ್ಲು ಅರ್ಜುನ್ ಮಗನ ಮಹದಾಸೆ ಈಡೇರಿಸಿದ ಆರ್‌ಸಿಬಿ ಸ್ಟಾರ್ ಆಟಗಾರ ವೆಂಕಿ
+[MURDER] OneIndia Kannada | IPL 2026 Final: 92 ರನ್‌ ಉಳಿಸಿಕೊಂಡು ಫೈನಲ್ ಪ್ರವೇಶಿಸಿದ ಆರ್‌ಸಿಬಿ
+[NON_CRIME] OneIndia Kannada | Monsoon Rain: ಮುಂಗಾರು ಆಗಮನ ವಿಳಂಬ, ಜೂನ್ ಮೊದಲ ವಾರ ಗುಡ್‌ನ್ಯೂಸ್ ಸಾಧ್ಯತೆ: ಐಎಂಡಿ
+[NON_CRIME] OneIndia Kannada | ಆರ್‌ಸಿಬಿ ಕೇವಲ ವಿರಾಟ್‌ ಕೊಹ್ಲಿ ಮೇಲೆ ಅವಲಂಬಿತವಾಗಿಲ್ಲ: ಭಾರತದ ಮಾಜಿ ಕ್ರಿಕೆಟರ್
+[NON_CRIME] OneIndia Kannada | ರಾಹುಲ್ ಗಾಂಧಿ ಸೂಚನೆ: ಮೇ 28ಕ್ಕೆ ರಾಜೀನಾಮೆ ನೀಡಲು ಮುಂದಾದ ಸಿದ್ದರಾಮಯ್ಯ? ಡಿಕೆಶಿಗೆ ಸಿಎಂ ಪಟ್ಟ!
+[NON_CRIME] OneIndia Kannada | IPL 2026 Qualifier: ಆರ್‌ಸಿಬಿ ನಾಯಕ ರಜತ್ ಪಾಟಿದಾರ್ ಬೆಂಕಿಯಾಟಕ್ಕೆ ಬೆಚ್ಚಿದ ಜಿಟಿ ಬೌಲರ್ಸ್‌, 255 ರನ್‌ಗಳ ಬೃಹತ್ ಗುರಿ
+[NON_CRIME] OneIndia Kannada | ಹೈಕಮಾಂಡ್ ಆಫರ್‌ಗೆ ನೋ ಎಂದ್ರಾ ಸಿದ್ದರಾಮಯ್ಯ? ಡಿಕೆಶಿಗೆ ಮತ್ತೆ ನಿರಾಸೆ, ದೆಹಲಿಯಲ್ಲಿ ಚರ್ಚೆ ಆಗಿದ್ದೇನು?
+
+Summary: 10 crime/accident articles found out of 80
+=================================================

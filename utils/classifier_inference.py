@@ -252,6 +252,8 @@ def _heuristic_classify(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Da
 
         if not crime_found:
             df.at[idx, 'non_crime'] = 1
+        else:
+            df.at[idx, 'non_crime'] = 0
 
     logger.info("Heuristic classification completed successfully.")
     return df
@@ -334,7 +336,9 @@ def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.Data
                         crime_found = True
                         break
 
-            if not crime_found:
+            if crime_found:
+                df.at[idx, 'non_crime'] = 0
+            else:
                 df.at[idx, 'non_crime'] = 1
 
         progress_bar.empty()

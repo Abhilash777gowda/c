@@ -395,6 +395,21 @@ if page == "📰 Live News Feed":
         if 'date' in filtered.columns:
             filtered = filtered.sort_values('date', ascending=False)
 
+        # --- Premium Real-Time Analytics Bar ---
+        with st.container():
+            total_cnt = len(df)
+            crime_cnt = len(df[df['non_crime'] == 0]) if 'non_crime' in df.columns else 0
+            non_crime_cnt = len(df[df['non_crime'] == 1]) if 'non_crime' in df.columns else total_cnt
+            
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                st.metric("Total Fetched Articles", total_cnt)
+            with c2:
+                st.metric("🚨 Active Crime/Accident Alerts", crime_cnt)
+            with c3:
+                st.metric("📰 General News Highlights", non_crime_cnt)
+            st.divider()
+
         st.markdown(f"**Showing {min(n_show, len(filtered))} of {len(filtered)} articles**")
         st.divider()
 
