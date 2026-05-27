@@ -12,8 +12,8 @@ class HindiWebScraper:
     Uses direct HTML parsing for better reliability than RSS.
     """
     SOURCES = {
-        "Amar Ujala": "https://www.amarujala.com/india-news",
-        "Dainik Bhaskar": "https://www.bhaskar.com/national/"
+        "Amar Ujala": "https://www.amarujala.com/crime",
+        "Dainik Bhaskar": "https://www.bhaskar.com/national/crime/"
     }
 
     def scrape_source(self, source_name, url, max_results=10):

@@ -18,9 +18,9 @@ class KannadaWebScraper:
         }
         
         self.sources = {
-            "Prajavani": "https://www.prajavani.net/",
-            "Udayavani": "https://www.udayavani.com/category/state",
-            "Vijayakarnataka": "https://vijaykarnataka.com/",
+            "Prajavani": "https://www.prajavani.net/news",
+            "Udayavani": "https://www.udayavani.com/news_menu/crime/685541b8d3279fb061cfdb24?lang=kn",
+            "Vijayakarnataka": "https://vijaykarnataka.com/news/karnataka/",
             "Vijayavani": "https://www.vijayavani.net/"
         }
 

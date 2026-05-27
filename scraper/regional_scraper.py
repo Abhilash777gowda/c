@@ -11,10 +11,10 @@ class RegionalWebScraper:
     Scrapes Tamil news from Dina Thanthi and Telugu news from Sakshi.
     """
     TAMIL_SOURCES = {
-        "Dina Thanthi": "https://www.dailythanthi.com/News/India"
+        "Dina Thanthi": "https://www.dailythanthi.com/news/crime"
     }
     TELUGU_SOURCES = {
-        "Sakshi": "https://www.sakshi.com/national"
+        "Sakshi": "https://www.sakshi.com/crime"
     }
 
     def scrape_source(self, source_name, url, lang, max_results=10):
