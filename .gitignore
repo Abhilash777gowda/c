@@ -4,13 +4,24 @@ __pycache__/
 .env
 pipeline.log
 error.log
-data/.last_updated
-plots/*.png
-models/saved_muril/
-models/saved_xlmroberta/
-models/
+
+# Data files — ignore large CSVs and runtime files, but track source Python modules
 data/
+!data/*.py
+
+# Model directories — ignore saved weights and binaries, but track source Python modules
+models/
+!models/*.py
+
+# Large binary model artifacts
 *.safetensors
 *.bin
-__pycache__/
-*.pyc
+*.pkl
+
+# Plot outputs
+plots/*.png
+
+# Scratch / debug files
+scratch/
+diag_fp.txt
+test_fp.txt

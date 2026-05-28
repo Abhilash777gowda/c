@@ -5,32 +5,42 @@ from utils.helpers import setup_logging
 
 logger = setup_logging()
 
-# Expanded RSS feeds including standard and regional versions of requested papers
+# Expanded RSS feeds — prioritise dedicated CRIME sections for accurate classification
 RSS_FEEDS = {
-    # TOI (verified — serves crime and general articles)
+    # ── English: dedicated crime/incident feeds ──────────────────────────────
     "TOI Crime":            "https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms",
-    "Times of India":       "https://timesofindia.indiatimes.com/rssfeeds/2947300.cms",
-    
-    # The Hindu (National News)
-    "The Hindu":            "https://www.thehindu.com/news/national/feeder/default.rss",
-    
-    # Amar Ujala verified crime news (Hindi)
+    "NDTV India Crime":     "https://feeds.feedburner.com/ndtvnews-india-news",
+    "India Today Crime":    "https://www.indiatoday.in/rss/1206514",
+    "News18 Crime":         "https://www.news18.com/rss/crime.xml",
+    "Hindustan Times Crime":"https://www.hindustantimes.com/feeds/rss/crime/rssfeed.xml",
+    "The Hindu National":   "https://www.thehindu.com/news/national/feeder/default.rss",
+    "Indian Express India": "https://indianexpress.com/section/india/feed/",
+    "Deccan Herald":        "https://www.deccanherald.com/rss/crime-news.rss",
+    "Scroll India":         "https://scroll.in/feed",
+    "LiveMint":             "https://www.livemint.com/rss/news",
+
+    # ── Hindi: dedicated crime feeds ─────────────────────────────────────────
     "Amar Ujala Crime":     "https://www.amarujala.com/rss/crime.xml",
-    
-    # National India news for diversity
-    "NDTV India":           "https://feeds.feedburner.com/ndtvnews-india-news",
+    "Dainik Bhaskar Crime": "https://www.bhaskar.com/rss-feed/8491/",
+    "Dainik Jagran Crime":  "https://www.jagran.com/rss/news-national.xml",
+    "Navbharat Times":      "https://navbharattimes.indiatimes.com/rssfeeds/2319761.cms",
+    "Patrika Crime":        "https://www.patrika.com/rss/crime-news.xml",
+    "Jansatta":             "https://www.jansatta.com/feed/",
+
+    # ── English: general national news (broad crime coverage) ────────────────
+    "Times of India":       "https://timesofindia.indiatimes.com/rssfeeds/2947300.cms",
     "Hindustan Times":      "https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml",
-    
-    # Regional / Karnataka News (Prajavani, Vijay Karnataka, Udayavani, Vijayavani)
+
+    # ── Kannada regional ─────────────────────────────────────────────────────
     "Prajavani":            "https://www.prajavani.net/rssfeeds/karnataka.xml",
     "Vijay Karnataka":      "https://vijaykarnataka.com/rssfeeds/21283013.cms",
     "Udayavani":            "https://www.udayavani.com/category/state/feed",
     "Vijayavani":           "https://www.vijayavani.net/feed",
-    
-    # Other regional feeds
+    "OneIndia Kannada":     "https://kannada.oneindia.com/rss/kannada-news-fb.xml",
+
+    # ── Tamil & Telugu regional ───────────────────────────────────────────────
     "OneIndia Tamil":       "https://tamil.oneindia.com/rss/tamil-news-fb.xml",
     "OneIndia Telugu":      "https://telugu.oneindia.com/rss/telugu-news-fb.xml",
-    "OneIndia Kannada":     "https://kannada.oneindia.com/rss/kannada-news-fb.xml",
 }
 
 

@@ -1,4 +1,5 @@
 import os
+import re
 import pickle
 import pandas as pd
 import streamlit as st
@@ -32,19 +33,41 @@ _zs_classifier = None
 
 @st.cache_resource(show_spinner=False)
 def get_zeroshot_classifier():
-    """Load the multilingual zero-shot classifier, falling back to heuristic if RAM is insufficient."""
+    """Return the classifier to use.
+
+    By default the fast keyword heuristic is used on ALL platforms so that
+    classification is instant.  To opt-in to the heavy mDeBERTa zero-shot
+    model (requires ~2 GB RAM and several minutes on first run) set the
+    environment variable::
+
+        USE_AI_CLASSIFIER=true
+
+    before starting Streamlit.
+    """
     global _zs_classifier
     if _zs_classifier is not None:
         return _zs_classifier
-        
+
     import sys
-    # Instantly trigger heuristic mode on Streamlit Cloud or forced overrides to prevent memory leaks/crashes
-    if os.environ.get('FORCE_HEURISTIC') == 'true' or os.environ.get('HOSTNAME') == 'streamlit-cloud' or sys.platform == 'linux':
-        logger.info("Forcing Zero-Memory Heuristic Classifier (Cloud deployment / override detected).")
+
+    # --- Fast path (default): heuristic keyword classifier ---
+    # Opt-out conditions: cloud deployment, forced override, OR simply not opted in.
+    use_ai = os.environ.get('USE_AI_CLASSIFIER', 'false').lower() == 'true'
+    force_heuristic = (
+        os.environ.get('FORCE_HEURISTIC') == 'true'
+        or os.environ.get('HOSTNAME') == 'streamlit-cloud'
+        or sys.platform == 'linux'
+        or not use_ai          # <-- DEFAULT: heuristic unless explicitly opted in
+    )
+    if force_heuristic:
+        logger.info(
+            "Using fast Heuristic Keyword Classifier. "
+            "Set USE_AI_CLASSIFIER=true to enable the heavy AI model."
+        )
         return "HEURISTIC"
 
     try:
-        logger.info("Loading mDeBERTa multilingual Zero-Shot classifier...")
+        logger.info("Loading mDeBERTa multilingual Zero-Shot classifier (opt-in mode)...")
         clf = pipeline(
             "zero-shot-classification",
             model="MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
@@ -220,43 +243,137 @@ _CRIME_INDICATOR_PHRASES = [
                         'कार दुर्घटना', 'बाइक हादसा']),
 ]
 
+# ── Political context suppressor ────────────────────────────────────────────
+# If an article title strongly matches ANY of these patterns it is almost
+# certainly a political/governance story.  When such a title has NO crime
+# keyword in the title itself (only in the RSS summary body), we override the
+# classification and mark it as non_crime to prevent false positives.
+_POLITICAL_TITLE_PATTERNS = re.compile(
+    r'(?:'
+    # English political roles & actions
+    r'\b(?:chief minister|prime minister|home minister|finance minister|cm\b|pm\b'
+    r'|mla\b|mp\b|governor|president|vice president|cabinet|election|minister'
+    r'|parliament|assembly|lok sabha|rajya sabha|inaugurated|launched|announced'
+    r'|press conference|political|party|congress|bjp|aap|jdu|bsp|ysrcp|dmc'
+    r'|rally|yatra|padyatra|manifesto|coalition|budget|ordinance|legislation)\b'
+    # Kannada political terms
+    r'|ಮುಖ್ಯಮಂತ್ರಿ|ಪ್ರಧಾನ\s*ಮಂತ್ರಿ|ಮಂತ್ರಿ|ಶಾಸಕ|ಸಂಸದ|ಸಿಎಂ|ವಿಧಾನಸಭೆ'
+    r'|ಸರ್ಕಾರ|ಆಶೀರ್ವಾದ|ಸ್ವಾಗತ|ಚುನಾವಣೆ|ಅಧಿವೇಶನ|ಒಕ್ಕೂಟ|ಪಕ್ಷ'
+    # Hindi political terms
+    r'|मुख्यमंत्री|प्रधानमंत्री|मंत्री|विधायक|सांसद|राज्यपाल|सरकार|आशीर्वाद'
+    r'|राजनीति|विधानसभा|चुनाव|राजनेता|नेता|पार्टी|भाजपा|कांग्रेस'
+    # Tamil political terms
+    r'|முதலமைச்சர்|மந்திரி|சட்டமன்ற|பாராளுமன்ற'
+    # Telugu political terms
+    r'|ముఖ్యమంత్రి|మంత్రి|శాసనసభ|పార్లమెంట్'
+    r')',
+    re.IGNORECASE
+)
+
+
 def _heuristic_classify(df: pd.DataFrame, text_col: str = "clean_text") -> pd.DataFrame:
-    """Fast keyword-based classifier. Scans raw title+text+clean_text and indicator phrases."""
-    logger.info("Running Heuristic Keyword Classification...")
-    for idx, row in df.iterrows():
-        # Scan raw title + raw text + clean_text for maximum recall
-        raw_text = (
-            str(row.get('title', '')) + " " +
-            str(row.get('text', '')) + " " +
-            str(row.get(text_col, ''))
-        ).lower()
+    """Fast vectorised keyword-based classifier with political-context suppression.
 
-        # Sanity check: replace nan strings from pandas conversion
-        raw_text = raw_text.replace(" nan ", " ")
+    Strategy:
+    1. Build a per-row corpus string (title + text + clean_text).
+    2. Scan corpus against keyword lists with regex.
+    3. For any match, also check if the article TITLE alone triggers the keyword.
+       If the title is clearly political AND the crime keyword only appears in the
+       summary/body (not the title), suppress the crime label → non_crime.
+    """
+    logger.info("Running fast Heuristic Keyword Classification (%d articles)...", len(df))
 
-        crime_found = False
-        if len(raw_text) > 5:
-            # Primary keyword scan
-            for cat, words in _HEURISTIC_KEYWORDS.items():
-                if any(w in raw_text for w in words):
-                    df.at[idx, cat] = 1
-                    crime_found = True
+    # Ensure all category columns exist and start at 0
+    for cat in CRIME_CATEGORIES:
+        if cat not in df.columns:
+            df[cat] = 0
 
-            # High-signal indicator phrases scan
-            if not crime_found:
-                for cat, phrases in _CRIME_INDICATOR_PHRASES:
-                    if any(p in raw_text for p in phrases):
-                        df.at[idx, cat] = 1
-                        crime_found = True
-                        break
+    # ── Build search strings ─────────────────────────────────────────────────
+    title_series: pd.Series = (
+        df.get('title', pd.Series([''] * len(df), index=df.index)).fillna('').astype(str)
+    ).str.lower()
 
-        if not crime_found:
-            df.at[idx, 'non_crime'] = 1
-        else:
-            df.at[idx, 'non_crime'] = 0
+    corpus: pd.Series = (
+        title_series
+        + " "
+        + df.get('text', pd.Series([''] * len(df), index=df.index)).fillna('').astype(str).str.lower()
+        + " "
+        + df.get(text_col, pd.Series([''] * len(df), index=df.index)).fillna('').astype(str).str.lower()
+    ).str.replace(' nan ', ' ', regex=False)
 
-    logger.info("Heuristic classification completed successfully.")
+    # ── Precompile per-category patterns ────────────────────────────────────
+    cat_patterns = {
+        cat: re.compile('|'.join(re.escape(w) for w in words), re.IGNORECASE)
+        for cat, words in _HEURISTIC_KEYWORDS.items()
+    }
+
+    # Strong crime-action words that override the political suppressor.
+    # If these appear IN the title, it's real crime news regardless of political context
+    # (e.g. "CM arrested", "Minister killed", "MLA shot dead").
+    _CRIME_ACTION_IN_TITLE = re.compile(
+        r'\b(?:arrested|detained|killed|shot|stabbed|murdered|accused|chargesheet'
+        r'|fir|raped|abducted|kidnapped|robbed|looted|cheated|defrauded|held'
+        r'|convicted|sentenced|jailed|nabbed|caught)\b'
+        r'|(?:\u0917\u093f\u0930\u092b\u094d\u0924\u093e\u0930|\u0917\u093f\u0930\u092b\u094d\u0924|\u0906\u0930\u094b\u092a\u0940|\u092e\u093e\u0930\u093e \u0917\u092f\u093e)'  # Hindi: arrested/accused/killed
+        r'|(?:\u0c17\u0c3f\u0c30\u0c2b\u0c4d\u0c24\u0c3e\u0c30\u0c4d|\u0c39\u0c24\u0c4d\u0c2f)'            # Telugu: arrested/murder
+        r'|(?:\u0cac\u0c82\u0ca7\u0cbf\u0ca4|\u0c95\u0cca\u0cb2\u0cc6|\u0cb9\u0ca4\u0ccd\u0caf\u0cc6)'       # Kannada: arrested/murder
+        r'|(?:\u0b95\u0bc8\u0ba4\u0bc1|\u0b95\u0bc6\u0bbe\u0bb2\u0bc8)',                          # Tamil: arrested/murder
+        re.IGNORECASE
+    )
+
+    # ── Vectorised primary keyword scan ─────────────────────────────────────
+    crime_mask = pd.Series(False, index=df.index)
+    # Pre-compute which titles have a strong crime action (overrides political suppressor)
+    crime_action_in_title = title_series.str.contains(_CRIME_ACTION_IN_TITLE, regex=True, na=False)
+
+    for cat, pat in cat_patterns.items():
+        matched_full = corpus.str.contains(pat, regex=True, na=False)
+
+        if matched_full.any():
+            # For rows that matched in the full corpus, check if the crime keyword
+            # also appears in the title.  If NOT in title AND title is clearly
+            # political AND no strong crime action word in title → suppress.
+            matched_in_title = title_series.str.contains(pat, regex=True, na=False)
+            political_title  = title_series.str.contains(_POLITICAL_TITLE_PATTERNS, regex=True, na=False)
+
+            # Suppress: matched only in body + political title + no crime action
+            suppressed = matched_full & ~matched_in_title & political_title & ~crime_action_in_title
+            confirmed  = matched_full & ~suppressed
+
+            df.loc[confirmed, cat] = 1
+            crime_mask |= confirmed
+
+    # ── High-signal indicator phrases (fallback for unmatched rows) ─────────
+    no_crime_idx = df.index[~crime_mask]
+    if len(no_crime_idx) > 0:
+        political_mask = title_series.str.contains(_POLITICAL_TITLE_PATTERNS, regex=True, na=False)
+        for cat, phrases in _CRIME_INDICATOR_PHRASES:
+            pat = re.compile('|'.join(re.escape(p) for p in phrases), re.IGNORECASE)
+            matched = corpus.loc[no_crime_idx].str.contains(pat, regex=True, na=False)
+            matched_idx = matched[matched].index
+            if len(matched_idx) > 0:
+                # Apply political suppression here too, but NOT when a strong
+                # crime-action word (arrested, killed, etc.) is in the title.
+                title_match       = title_series.loc[matched_idx].str.contains(pat, regex=True, na=False)
+                is_political      = political_mask.loc[matched_idx]
+                has_crime_action  = crime_action_in_title.loc[matched_idx]
+                confirmed_idx     = matched_idx[title_match | ~is_political | has_crime_action]
+                if len(confirmed_idx) > 0:
+                    df.loc[confirmed_idx, cat] = 1
+                    crime_mask.loc[confirmed_idx] = True
+                    no_crime_idx = df.index[~crime_mask]
+
+    # ── Mark non-crime rows ──────────────────────────────────────────────────
+    df.loc[~crime_mask, 'non_crime'] = 1
+    df.loc[crime_mask,  'non_crime'] = 0
+
+    crime_count = int(crime_mask.sum())
+    logger.info(
+        "Heuristic classification done: %d crime / %d non-crime out of %d articles.",
+        crime_count, len(df) - crime_count, len(df)
+    )
     return df
+
 
 
 def classify_articles(df: pd.DataFrame, text_col: str = "clean_text") -> pd.DataFrame:
